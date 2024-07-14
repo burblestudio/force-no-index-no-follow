@@ -46,12 +46,6 @@ new DPUpdateChecker(
 
 //BEGIN PLUGIN CODE - EDIT BELOW THIS
 
-// Enqueue plugin styles
-function fninf_enqueue_styles() {
-    wp_enqueue_style('fninf-styles', plugin_dir_url(__FILE__) . 'assets/fninf-styles.css');
-}
-add_action('admin_enqueue_scripts', 'fninf_enqueue_styles');
-
 // Add noindex, nofollow meta tag to head
 function force_noindex_nofollow() {
     echo '<meta name="robots" content="noindex, nofollow">' . "\n";
@@ -79,6 +73,15 @@ function remove_default_robots_meta() {
 }
 add_action('init', 'remove_default_robots_meta');
 
+//Reset admin notice dismissal settings upon activation
+function fninf_clear_notice_dismissals() {
+    $users = get_users(array('fields' => 'ID'));
+    foreach ($users as $user_id) {
+        delete_user_meta($user_id, 'noindex_notice_dismissed');
+    }
+}
+register_activation_hook(__FILE__, 'fninf_clear_notice_dismissals');
+
 // Add permanently dismissible admin notice
 function noindex_admin_notice() {
     $user_id = get_current_user_id();
@@ -104,6 +107,7 @@ function dismiss_noindex_notice() {
 }
 add_action('wp_ajax_dismiss_noindex_notice', 'dismiss_noindex_notice');
 
+
 // Prevent unchecking "Discourage search engines" option
 function prevent_search_engine_indexing($value) {
     return 0; // Always keep the site discouraged from search engine indexing
@@ -112,18 +116,54 @@ add_filter('pre_update_option_blog_public', 'prevent_search_engine_indexing');
 
 // Add red callout box below the "Discourage search engines" checkbox
 function add_serp_blocking_notice($args) {
-    // Check if the current plugin is active
     if (is_plugin_active(plugin_basename(__FILE__))) {
-        echo '<div class="fninf-serp-notice">';
+        echo '<div style="padding: 10px; background-color: #FFB7B7; max-width: 70ch;">';
         echo '<p>This site is blocked from SERPs using the "Force No-Index No-Follow" plugin. If you wish to make the site visible to search engines, please <a href="' . wp_nonce_url(admin_url('plugins.php?action=deactivate&plugin=' . plugin_basename(__FILE__)), 'deactivate-plugin_' . plugin_basename(__FILE__)) . '">disable this plugin</a>.</p>';
         echo '</div>';
     }
     return $args;
 }
-add_filter('admin_field_blog_public', 'add_serp_blocking_notice');
+
+function add_custom_notice_to_settings() {
+    add_settings_field(
+        'force_no_index_no_follow_custom_notice',
+        '',
+        'add_serp_blocking_notice',
+        'reading',
+        'default',
+        array('label_for' => 'force_no_index_no_follow_custom_notice')
+    );
+}
+add_action('admin_init', 'add_custom_notice_to_settings');
 
 // Ensure "Discourage search engines" option is always checked
 function force_discourage_search_engines() {
     update_option('blog_public', 0);
 }
 add_action('admin_init', 'force_discourage_search_engines');
+
+// Add notice to wp-admin bar banner
+function add_force_hidden_to_admin_bar($wp_admin_bar) {
+    // Only add for logged-in users
+    if (!is_user_logged_in()) {
+        return;
+    }
+
+    // Node properties
+    $args = array(
+        'id'    => 'force_hidden',
+        'title' => '<span style="background-color: #FFB7B7; color: #7B0000; padding: 5px; border-radius: 3px;">SEO-BLOCKED</span>',
+        'href'  => admin_url('options-reading.php'),
+        'parent' => 'top-secondary', // This places it in the top right section
+        'meta'  => array(
+            'class' => 'force-hidden-banner',
+            'title' => 'Force Hidden'
+        )
+    );
+
+    // Add the node to the admin bar
+    $wp_admin_bar->add_node($args);
+}
+
+// Hook into the admin bar menu
+add_action('admin_bar_menu', 'add_force_hidden_to_admin_bar', 999);

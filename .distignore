@@ -12,3 +12,5 @@ package-lock.json
 package.json
 readme.txt
 readme.md
+
+/assets
