@@ -5,7 +5,7 @@
  * Description:       Force No-Index No-Follow's plugin description
  * Requires at least: 6.3.0
  * Requires PHP:      7.4
- * Version:           0.0.1
+ * Version:           0.0.4
  * Author:            burblestudio
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -45,6 +45,12 @@ new DPUpdateChecker(
 //END HOSTER CODE
 
 //BEGIN PLUGIN CODE - EDIT BELOW THIS
+
+// Enqueue plugin styles
+function fninf_enqueue_styles() {
+    wp_enqueue_style('fninf-styles', plugin_dir_url(__FILE__) . 'assets/fninf-styles.css');
+}
+add_action('admin_enqueue_scripts', 'fninf_enqueue_styles');
 
 // Add noindex, nofollow meta tag to head
 function force_noindex_nofollow() {
@@ -106,8 +112,9 @@ add_filter('pre_update_option_blog_public', 'prevent_search_engine_indexing');
 
 // Add red callout box below the "Discourage search engines" checkbox
 function add_serp_blocking_notice($args) {
-    if ($args['label_for'] === 'blog_public') {
-        echo '<div style="margin-top: 10px; padding: 10px; background-color: #ffebee; border-left: 4px solid #f44336; color: #b71c1c;">';
+    // Check if the current plugin is active
+    if (is_plugin_active(plugin_basename(__FILE__))) {
+        echo '<div class="fninf-serp-notice">';
         echo '<p>This site is blocked from SERPs using the "Force No-Index No-Follow" plugin. If you wish to make the site visible to search engines, please <a href="' . wp_nonce_url(admin_url('plugins.php?action=deactivate&plugin=' . plugin_basename(__FILE__)), 'deactivate-plugin_' . plugin_basename(__FILE__)) . '">disable this plugin</a>.</p>';
         echo '</div>';
     }
