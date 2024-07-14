@@ -5,7 +5,7 @@
  * Description:       Force No-Index No-Follow's plugin description
  * Requires at least: 6.3.0
  * Requires PHP:      7.4
- * Version:           0.0.4
+ * Version:           1.0.0
  * Author:            burblestudio
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
