@@ -5,12 +5,12 @@
  * Description:       Force No-Index No-Follow's plugin description
  * Requires at least: 6.3.0
  * Requires PHP:      7.4
- * Version:           1.0.0
+ * Version:           1.0.2
  * Author:            burblestudio
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       force_no_index_no_follow
- * Website:           
+ * Website:           https://www.burblestudio.com
  */
 
 //BEGIN HOSTER CODE - DO NOT EDIT
