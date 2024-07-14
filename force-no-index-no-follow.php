@@ -1,13 +1,50 @@
 <?php
-/*
-Plugin Name: Force No-Index No-Follow
-Plugin URI: http://burblestudio.com
-Description: Forces noindex, nofollow meta tags on all pages regardless of WordPress settings
-Version: 1.1
-Author: Burble Studio
-Author URI: http://brickslibrary.burblestudio.com
-License: GPL2
-*/
+
+/**
+ * Plugin Name:       Force No-Index No-Follow
+ * Description:       Force No-Index No-Follow's plugin description
+ * Requires at least: 6.3.0
+ * Requires PHP:      7.4
+ * Version:           0.0.1
+ * Author:            burblestudio
+ * License:           GPL-2.0-or-later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       force_no_index_no_follow
+ * Website:           
+ */
+
+//BEGIN HOSTER CODE - DO NOT EDIT
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+$plugin_prefix = 'FORCENOINDEXNOFOLLOW';
+
+// Extract the version number
+$plugin_data = get_file_data(__FILE__, ['Version' => 'Version']);
+
+// Plugin Constants
+define($plugin_prefix . '_DIR', plugin_basename(__DIR__));
+define($plugin_prefix . '_BASE', plugin_basename(__FILE__));
+define($plugin_prefix . '_PATH', plugin_dir_path(__FILE__));
+define($plugin_prefix . '_VER', $plugin_data['Version']);
+define($plugin_prefix . '_CACHE_KEY', 'force_no_index_no_follow-cache-key-for-plugin');
+define($plugin_prefix . '_REMOTE_URL', 'https://brickslibrary.burbledev.com/wp-content/uploads/downloads/169/info.json');
+
+require constant($plugin_prefix . '_PATH') . 'inc/update.php';
+
+new DPUpdateChecker(
+	constant($plugin_prefix . '_DIR'),
+	constant($plugin_prefix . '_VER'),
+	constant($plugin_prefix . '_CACHE_KEY'),
+	constant($plugin_prefix . '_REMOTE_URL'),
+	constant($plugin_prefix . '_BASE')
+);
+
+//END HOSTER CODE
+
+//BEGIN PLUGIN CODE - EDIT BELOW THIS
 
 // Add noindex, nofollow meta tag to head
 function force_noindex_nofollow() {
