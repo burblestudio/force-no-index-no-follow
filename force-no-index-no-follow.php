@@ -104,16 +104,16 @@ function prevent_search_engine_indexing($value) {
 }
 add_filter('pre_update_option_blog_public', 'prevent_search_engine_indexing');
 
-// Add non-dismissible notice when trying to enable search engine indexing
-function search_engine_indexing_notice() {
-    $screen = get_current_screen();
-    if ($screen->id === 'options-reading' && isset($_POST['blog_public'])) {
-        echo '<div class="notice notice-error">';
+// Add red callout box below the "Discourage search engines" checkbox
+function add_serp_blocking_notice($args) {
+    if ($args['label_for'] === 'blog_public') {
+        echo '<div style="margin-top: 10px; padding: 10px; background-color: #ffebee; border-left: 4px solid #f44336; color: #b71c1c;">';
         echo '<p>This site is blocked from SERPs using the "Force No-Index No-Follow" plugin. If you wish to make the site visible to search engines, please <a href="' . wp_nonce_url(admin_url('plugins.php?action=deactivate&plugin=' . plugin_basename(__FILE__)), 'deactivate-plugin_' . plugin_basename(__FILE__)) . '">disable this plugin</a>.</p>';
         echo '</div>';
     }
+    return $args;
 }
-add_action('admin_notices', 'search_engine_indexing_notice');
+add_filter('admin_field_blog_public', 'add_serp_blocking_notice');
 
 // Ensure "Discourage search engines" option is always checked
 function force_discourage_search_engines() {
