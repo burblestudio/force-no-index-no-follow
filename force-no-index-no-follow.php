@@ -5,7 +5,7 @@
  * Description:       Force No-Index No-Follow's plugin description
  * Requires at least: 6.3.0
  * Requires PHP:      7.4
- * Version:           1.0.2
+ * Version:           1.0.3
  * Author:            burblestudio
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -47,10 +47,10 @@ new DPUpdateChecker(
 //BEGIN PLUGIN CODE - EDIT BELOW THIS
 
 // Add noindex, nofollow meta tag to head
-function force_noindex_nofollow() {
-    echo '<meta name="robots" content="noindex, nofollow">' . "\n";
-}
-add_action('wp_head', 'force_noindex_nofollow', 1);
+//function force_noindex_nofollow() {
+    echo '<meta name=\'robots\' content=\'noindex, nofollow\'>' . "\n";
+//}
+//add_action('wp_head', 'force_noindex_nofollow', 1);
 
 // Add X-Robots-Tag HTTP header
 function add_noindex_nofollow_header() {
@@ -67,11 +67,11 @@ function custom_robots_txt($output, $public) {
 add_filter('robots_txt', 'custom_robots_txt', 10, 2);
 
 // Disable WordPress' default indexing controls
-function remove_default_robots_meta() {
-    remove_action('wp_head', 'noindex', 1);
-    remove_action('wp_head', 'wp_no_robots');
-}
-add_action('init', 'remove_default_robots_meta');
+//function remove_default_robots_meta() {
+//    remove_action('wp_head', 'noindex', 1);
+//    remove_action('wp_head', 'wp_no_robots');
+//}
+//add_action('init', 'remove_default_robots_meta');
 
 //Reset admin notice dismissal settings upon activation
 function fninf_clear_notice_dismissals() {
